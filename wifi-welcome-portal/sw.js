@@ -1,5 +1,5 @@
-
-const CACHE_NAME = "islamic-portal-v1";
+// Bump this number whenever you change any cached file.
+const CACHE_NAME = "islamic-portal-v2";
 
 const ASSETS = [
   "/",
@@ -15,7 +15,12 @@ const ASSETS = [
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(ASSETS))
+      .then(cache => Promise.all(
+        // "reload" skips the browser's HTTP cache so we store fresh copies.
+        ASSETS.map(url =>
+          cache.add(new Request(url, { cache: "reload" })).catch(() => {})
+        )
+      ))
       .then(() => self.skipWaiting())
   );
 });
@@ -32,33 +37,34 @@ self.addEventListener("activate", event => {
   );
 });
 
+// Network first (always the newest files when online), cache as offline backup.
 self.addEventListener("fetch", event => {
-  if (event.request.method !== "GET") return;
+  const request = event.request;
+  if (request.method !== "GET") return;
+
+  const url = new URL(request.url);
+  // Leave other websites (e.g. the prayer-time API) and private pages alone.
+  if (url.origin !== self.location.origin) return;
+  if (url.pathname === "/visitors" || url.pathname === "/health") return;
 
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
-
-      return fetch(event.request).then(response => {
+    fetch(request)
+      .then(response => {
         if (response.ok) {
           const copy = response.clone();
-
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, copy);
-          });
+          caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
         }
-
         return response;
-      }).catch(() => {
-        if (event.request.mode === "navigate") {
-          return caches.match("/");
-        }
-
-        return new Response("Offline and resource not cached.", {
-          status: 503,
-          headers: { "Content-Type": "text/plain; charset=utf-8" }
-        });
-      });
-    })
+      })
+      .catch(() =>
+        caches.match(request).then(cached => {
+          if (cached) return cached;
+          if (request.mode === "navigate") return caches.match("/");
+          return new Response("Offline and resource not cached.", {
+            status: 503,
+            headers: { "Content-Type": "text/plain; charset=utf-8" }
+          });
+        })
+      )
   );
 });
