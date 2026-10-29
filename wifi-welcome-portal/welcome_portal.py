@@ -10,8 +10,7 @@ ROOT = Path(__file__).resolve().parent
 VISITS_FILE = ROOT / "visits.jsonl"
 
 HOST = "0.0.0.0"
-PORT = 8080
-
+PORT = int(__import__("os").environ.get("PORT", "8080"))
 # Only explicitly listed files can be served.
 PUBLIC_FILES = {
     "/index.html": ("index.html", "text/html; charset=utf-8"),
