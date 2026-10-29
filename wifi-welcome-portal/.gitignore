@@ -1,0 +1,9 @@
+﻿visits.jsonl
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+__pycache__/
+.venv/
+venv/

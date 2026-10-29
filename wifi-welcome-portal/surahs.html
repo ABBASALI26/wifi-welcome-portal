@@ -1,0 +1,630 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#142b42">
+<title>Surahs & Adhkar</title>
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .reading-list { display:grid; gap:14px; }
+  .reading-item {
+    border:1px solid #cce4db;
+    border-radius:14px;
+    overflow:hidden;
+    background:var(--card, #fff);
+  }
+  .reading-item[open] { box-shadow:0 5px 18px #183b3210; }
+  .reading-item summary {
+    cursor:pointer;
+    list-style:none;
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding:17px;
+    background:#f0f7f4;
+  }
+  .reading-item summary::-webkit-details-marker { display:none; }
+  .reading-item summary::after {
+    content:"＋";
+    margin-left:auto;
+    font-size:1.3rem;
+    color:#176b57;
+  }
+  .reading-item[open] summary::after { content:"−"; }
+  .number {
+    width:40px;height:40px;flex:0 0 40px;
+    border-radius:50%;display:grid;place-items:center;
+    background:#28684f;color:white;font-weight:700;font-size:1.1rem;
+  }
+  .reading-title { flex:1;min-width:0; }
+  .reading-title strong { display:block;font-size:1.05rem; }
+  .reading-title small { display:block;margin-top:4px;color:#526b64; }
+  .read-check {
+    display:flex;align-items:center;gap:6px;
+    font-size:.88rem;white-space:nowrap;
+  }
+  .read-check input { width:18px;height:18px;accent-color:#28684f; }
+  .reading-content { padding:18px; }
+  .translation-grid {
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;
+  }
+  .translation { min-width:0;overflow-wrap:anywhere; }
+  .translation + .translation {
+    border-left:1px solid #d9e5e0;padding-left:18px;
+  }
+  .language {
+    display:inline-block;background:#e7f4ee;color:#176b57;
+    padding:5px 10px;border-radius:8px;font-size:.82rem;font-weight:700;
+    margin-bottom:12px;
+  }
+  .arabic {
+    font-family:"Noto Naskh Arabic","Amiri","Traditional Arabic",serif;
+    font-size:1.55rem;line-height:2.15;text-align:right;
+  }
+  .urdu {
+    font-family:"Noto Nastaliq Urdu","Noto Naskh Arabic","Jameel Noori Nastaleeq",serif;
+    font-size:1.15rem;line-height:2.2;text-align:right;
+  }
+  .translation p { margin:0 0 12px;line-height:1.8; }
+  .meaning-note { color:#5e6c66;font-size:.85rem;margin-top:16px; }
+  .progress-card {
+    margin-top:20px;padding:18px;border-radius:14px;background:#f0f5f8;
+  }
+  .progress-track { height:10px;border-radius:20px;background:#d8e3e9;overflow:hidden;margin-top:10px; }
+  .progress-fill { height:100%;width:0;background:#28684f;transition:width .2s; }
+  .toolbar { display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px; }
+  @media(max-width:760px) {
+    .translation-grid { grid-template-columns:1fr;gap:16px; }
+    .translation + .translation { border-left:0;border-top:1px solid #d9e5e0;padding:16px 0 0; }
+    .reading-item summary { gap:9px;padding:13px 10px; }
+    .number { width:34px;height:34px;flex-basis:34px; }
+    .read-check { font-size:.76rem;gap:3px; }
+    .reading-title strong { font-size:.95rem; }
+    .reading-title small { font-size:.8rem; }
+    .arabic { font-size:1.65rem; }
+  }
+  
+/* FIX: Make all reading text clearly visible */
+body,
+main.container {
+  color: #172b4d !important;
+}
+
+.reading-item {
+  background: #ffffff !important;
+  color: #172b4d !important;
+  border-color: #b7d9cd !important;
+}
+
+.reading-item summary {
+  background: #eaf5ef !important;
+  color: #172b4d !important;
+}
+
+.reading-title strong,
+.reading-title small,
+.reading-content,
+.translation,
+.translation p,
+.arabic,
+.urdu,
+.meaning-note,
+#readingStatus,
+#progressText {
+  color: #172b4d !important;
+}
+
+.language {
+  background: #d9f2e6 !important;
+  color: #145b45 !important;
+}
+
+.number {
+  background: #28684f !important;
+  color: #ffffff !important;
+}
+
+.read-check {
+  color: #172b4d !important;
+}
+
+.read-check input {
+  accent-color: #28684f;
+}
+
+.progress-card {
+  background: #edf4f8 !important;
+  color: #172b4d !important;
+}
+
+.progress-track {
+  background: #d4e1e9 !important;
+}
+
+.progress-fill {
+  background: #28684f !important;
+}
+
+</style>
+</head>
+<body>
+<main class="container">
+  <p><a href="/">← Home</a></p>
+
+  <header class="hero">
+    <p class="eyebrow">Your Qur'an reading corner</p>
+    <h1>Surahs & Adhkar 📖</h1>
+    <p>Read, reflect and build a consistent routine.</p>
+  </header>
+
+  <section class="card">
+    <div class="notice">
+      These passages and translations are provided for study. English and Urdu
+      are translations of meaning, not the Qur'an itself. For recitation,
+      tajweed and religious rulings, consult a trusted mushaf and qualified source.
+    </div>
+
+    <div id="readingChecklist" class="reading-list">
+
+      <details class="reading-item">
+        <summary>
+          <span class="number">1</span>
+          <span class="reading-title">
+            <strong>Surah Al-Fatihah</strong>
+            <small>Qur'an 1:1–7 · The Opening</small>
+          </span>
+          <label class="read-check" onclick="event.stopPropagation()">
+            <input type="checkbox" data-key="fatihah" aria-label="Mark Al-Fatihah as read">
+            Read
+          </label>
+        </summary>
+        <div class="reading-content">
+          <div class="translation-grid">
+            <section class="translation">
+              <span class="language">Arabic</span>
+              <div class="arabic" lang="ar" dir="rtl">
+                بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ۝
+                الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ۝
+                الرَّحْمَٰنِ الرَّحِيمِ ۝
+                مَالِكِ يَوْمِ الدِّينِ ۝
+                إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ ۝
+                اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ ۝
+                صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ
+                غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ
+              </div>
+            </section>
+            <section class="translation">
+              <span class="language">English meaning</span>
+              <p>In the name of Allah, the Most Compassionate, the Most Merciful.</p>
+              <p>All praise is for Allah, Lord of all worlds, the Most Compassionate, the Most Merciful, Master of the Day of Judgment.</p>
+              <p>You alone we worship, and You alone we ask for help.</p>
+              <p>Guide us along the Straight Path, the path of those You have blessed—not those who have incurred Your anger, or those who have gone astray.</p>
+            </section>
+            <section class="translation">
+              <span class="language">اردو ترجمہ</span>
+              <div class="urdu" lang="ur" dir="rtl">
+                اللہ کے نام سے جو نہایت مہربان، بے حد رحم فرمانے والا ہے۔<br>
+                سب تعریف اللہ ہی کے لیے ہے جو تمام جہانوں کا پروردگار ہے۔<br>
+                نہایت مہربان، بے حد رحم فرمانے والا۔<br>
+                روزِ جزا کا مالک۔<br>
+                ہم تیری ہی عبادت کرتے ہیں اور تجھ ہی سے مدد مانگتے ہیں۔<br>
+                ہمیں سیدھے راستے پر چلا۔<br>
+                ان لوگوں کے راستے پر جن پر تو نے انعام فرمایا، نہ ان کے جن پر غضب ہوا، اور نہ گمراہوں کے۔
+              </div>
+            </section>
+          </div>
+        </div>
+      </details>
+
+      <details class="reading-item">
+        <summary>
+          <span class="number">2</span>
+          <span class="reading-title">
+            <strong>Ayat al-Kursi</strong>
+            <small>Qur'an 2:255 · Allah's sovereignty</small>
+          </span>
+          <label class="read-check" onclick="event.stopPropagation()">
+            <input type="checkbox" data-key="kursi" aria-label="Mark Ayat al-Kursi as read">
+            Read
+          </label>
+        </summary>
+        <div class="reading-content">
+          <div class="translation-grid">
+            <section class="translation">
+              <span class="language">Arabic</span>
+              <div class="arabic" lang="ar" dir="rtl">
+                اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ
+                لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ
+                لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ
+                مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ
+                يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ
+                وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ
+                وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ
+                وَلَا يَئُودُهُ حِفْظُهُمَا ۚ
+                وَهُوَ الْعَلِيُّ الْعَظِيمُ
+              </div>
+            </section>
+            <section class="translation">
+              <span class="language">English meaning</span>
+              <p>Allah—there is no deity except Him, the Ever-Living, the Sustainer of all. Neither drowsiness nor sleep overtakes Him. To Him belongs whatever is in the heavens and whatever is on earth.</p>
+              <p>Who could intercede with Him without His permission? He knows what is before them and what is behind them, and they grasp nothing of His knowledge except what He wills.</p>
+              <p>His Kursi extends over the heavens and the earth, and preserving them does not tire Him. He is the Most High, the Most Great.</p>
+            </section>
+            <section class="translation">
+              <span class="language">اردو ترجمہ</span>
+              <div class="urdu" lang="ur" dir="rtl">
+                اللہ، اس کے سوا کوئی معبود نہیں، وہ ہمیشہ زندہ رہنے والا، سب کو قائم رکھنے والا ہے۔ اسے نہ اونگھ آتی ہے اور نہ نیند۔ آسمانوں اور زمین میں جو کچھ ہے سب اسی کا ہے۔<br>
+                کون ہے جو اس کی اجازت کے بغیر اس کے حضور سفارش کر سکے؟ وہ جانتا ہے جو ان کے سامنے ہے اور جو ان کے پیچھے ہے، اور وہ اس کے علم میں سے کسی چیز کا احاطہ نہیں کر سکتے مگر جتنا وہ چاہے۔<br>
+                اس کی کرسی آسمانوں اور زمین پر وسیع ہے، اور ان دونوں کی حفاظت اسے نہیں تھکاتی۔ وہی بلند مرتبہ، عظمت والا ہے۔
+              </div>
+            </section>
+          </div>
+        </div>
+      </details>
+
+      <details class="reading-item">
+        <summary>
+          <span class="number">3</span>
+          <span class="reading-title">
+            <strong>Surah Al-Ikhlas</strong>
+            <small>Qur'an 112 · Allah's oneness</small>
+          </span>
+          <label class="read-check" onclick="event.stopPropagation()">
+            <input type="checkbox" data-key="ikhlas" aria-label="Mark Al-Ikhlas as read">
+            Read
+          </label>
+        </summary>
+        <div class="reading-content">
+          <div class="translation-grid">
+            <section class="translation">
+              <span class="language">Arabic</span>
+              <div class="arabic" lang="ar" dir="rtl">
+                قُلْ هُوَ اللَّهُ أَحَدٌ ۝
+                اللَّهُ الصَّمَدُ ۝
+                لَمْ يَلِدْ وَلَمْ يُولَدْ ۝
+                وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ
+              </div>
+            </section>
+            <section class="translation">
+              <span class="language">English meaning</span>
+              <p>Say: He is Allah, the One.</p>
+              <p>Allah, the Eternal Refuge.</p>
+              <p>He neither begets nor is born.</p>
+              <p>And there is none comparable to Him.</p>
+            </section>
+            <section class="translation">
+              <span class="language">اردو ترجمہ</span>
+              <div class="urdu" lang="ur" dir="rtl">
+                کہہ دیجیے: وہ اللہ ایک ہے۔<br>
+                اللہ بے نیاز ہے۔<br>
+                نہ اس کی کوئی اولاد ہے اور نہ وہ کسی کی اولاد ہے۔<br>
+                اور کوئی بھی اس کے برابر نہیں۔
+              </div>
+            </section>
+          </div>
+        </div>
+      </details>
+
+      <details class="reading-item">
+        <summary>
+          <span class="number">4</span>
+          <span class="reading-title">
+            <strong>Surah Al-Falaq</strong>
+            <small>Qur'an 113 · Seeking refuge</small>
+          </span>
+          <label class="read-check" onclick="event.stopPropagation()">
+            <input type="checkbox" data-key="falaq" aria-label="Mark Al-Falaq as read">
+            Read
+          </label>
+        </summary>
+        <div class="reading-content">
+          <div class="translation-grid">
+            <section class="translation">
+              <span class="language">Arabic</span>
+              <div class="arabic" lang="ar" dir="rtl">
+                قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝
+                مِنْ شَرِّ مَا خَلَقَ ۝
+                وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ ۝
+                وَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۝
+                وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ
+              </div>
+            </section>
+            <section class="translation">
+              <span class="language">English meaning</span>
+              <p>Say: I seek refuge in the Lord of daybreak,</p>
+              <p>from the evil of what He has created,</p>
+              <p>and from the evil of darkness when it settles,</p>
+              <p>and from the evil of those who blow on knots,</p>
+              <p>and from the evil of an envier when they envy.</p>
+            </section>
+            <section class="translation">
+              <span class="language">اردو ترجمہ</span>
+              <div class="urdu" lang="ur" dir="rtl">
+                کہہ دیجیے: میں صبح کے رب کی پناہ مانگتا ہوں،<br>
+                ہر اس چیز کے شر سے جو اس نے پیدا کی،<br>
+                اور اندھیری رات کے شر سے جب وہ چھا جائے،<br>
+                اور گرہوں میں پھونکنے والوں کے شر سے،<br>
+                اور حسد کرنے والے کے شر سے جب وہ حسد کرے۔
+              </div>
+            </section>
+          </div>
+        </div>
+      </details>
+
+      <details class="reading-item">
+        <summary>
+          <span class="number">5</span>
+          <span class="reading-title">
+            <strong>Surah An-Nas</strong>
+            <small>Qur'an 114 · Seeking refuge in Allah</small>
+          </span>
+          <label class="read-check" onclick="event.stopPropagation()">
+            <input type="checkbox" data-key="nas" aria-label="Mark An-Nas as read">
+            Read
+          </label>
+        </summary>
+        <div class="reading-content">
+          <div class="translation-grid">
+            <section class="translation">
+              <span class="language">Arabic</span>
+              <div class="arabic" lang="ar" dir="rtl">
+                قُلْ أَعُوذُ بِرَبِّ النَّاسِ ۝
+                مَلِكِ النَّاسِ ۝
+                إِلَٰهِ النَّاسِ ۝
+                مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ۝
+                الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ۝
+                مِنَ الْجِنَّةِ وَالنَّاسِ
+              </div>
+            </section>
+            <section class="translation">
+              <span class="language">English meaning</span>
+              <p>Say: I seek refuge in the Lord of mankind,</p>
+              <p>the King of mankind,</p>
+              <p>the God of mankind,</p>
+              <p>from the evil of the retreating whisperer,</p>
+              <p>who whispers into the hearts of mankind,</p>
+              <p>whether from jinn or from mankind.</p>
+            </section>
+            <section class="translation">
+              <span class="language">اردو ترجمہ</span>
+              <div class="urdu" lang="ur" dir="rtl">
+                کہہ دیجیے: میں لوگوں کے رب کی پناہ مانگتا ہوں،<br>
+                لوگوں کے بادشاہ کی،<br>
+                لوگوں کے معبود کی،<br>
+                وسوسہ ڈال کر پیچھے ہٹ جانے والے کے شر سے،<br>
+                جو لوگوں کے سینوں میں وسوسے ڈالتا ہے،<br>
+                خواہ وہ جنوں میں سے ہو یا انسانوں میں سے۔
+              </div>
+            </section>
+          </div>
+        </div>
+      </details>
+
+      <details class="reading-item">
+        <summary>
+          <span class="number">6</span>
+          <span class="reading-title">
+            <strong>Salawat upon Prophet Muhammad ﷺ</strong>
+            <small>Sending blessings upon the Prophet ﷺ</small>
+          </span>
+          <label class="read-check" onclick="event.stopPropagation()">
+            <input type="checkbox" data-key="salawat" aria-label="Mark Salawat as read">
+            Read
+          </label>
+        </summary>
+        <div class="reading-content">
+          <div class="translation-grid">
+            <section class="translation">
+              <span class="language">Arabic · Salat Ibrahimiyyah</span>
+              <div class="arabic" lang="ar" dir="rtl">
+                اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ،
+                كَمَا صَلَّيْتَ عَلَىٰ إِبْرَاهِيمَ وَعَلَىٰ آلِ إِبْرَاهِيمَ،
+                إِنَّكَ حَمِيدٌ مَجِيدٌ.<br><br>
+                اللَّهُمَّ بَارِكْ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ،
+                كَمَا بَارَكْتَ عَلَىٰ إِبْرَاهِيمَ وَعَلَىٰ آلِ إِبْرَاهِيمَ،
+                إِنَّكَ حَمِيدٌ مَجِيدٌ.
+              </div>
+            </section>
+            <section class="translation">
+              <span class="language">English meaning</span>
+              <p>O Allah, send blessings upon Muhammad and the family of Muhammad, as You sent blessings upon Ibrahim and the family of Ibrahim. Surely, You are Praiseworthy and Glorious.</p>
+              <p>O Allah, bestow grace upon Muhammad and the family of Muhammad, as You bestowed grace upon Ibrahim and the family of Ibrahim. Surely, You are Praiseworthy and Glorious.</p>
+            </section>
+            <section class="translation">
+              <span class="language">اردو ترجمہ</span>
+              <div class="urdu" lang="ur" dir="rtl">
+                اے اللہ! محمد ﷺ اور آلِ محمد پر رحمت نازل فرما، جس طرح تو نے ابراہیم اور آلِ ابراہیم پر رحمت نازل فرمائی۔ بے شک تو تعریف کے لائق، بزرگی والا ہے۔<br><br>
+                اے اللہ! محمد ﷺ اور آلِ محمد پر برکت نازل فرما، جس طرح تو نے ابراہیم اور آلِ ابراہیم پر برکت نازل فرمائی۔ بے شک تو تعریف کے لائق، بزرگی والا ہے۔
+              </div>
+            </section>
+          </div>
+        </div>
+      </details>
+
+      <p class="small" id="extraSurahsStatus" aria-live="polite">Loading the five full Surahs… An internet connection is needed the first time they load.</p>
+    </div>
+    <p class="meaning-note">Arabic text: Tanzil Quran Text, CC BY 3.0, reproduced verbatim with attribution. English meaning: Marmaduke Pickthall (public domain). Urdu meaning: Mahmud ul Hasan (public domain). Data edition and licensing details: <a href="https://github.com/risan/quran-json" target="_blank" rel="noopener">Quran JSON</a>. Please verify Arabic against a trusted mushaf.</p>
+
+    <div class="toolbar">
+      <button id="resetReading" class="secondary" type="button">Reset today's checklist</button>
+      <span id="readingStatus" class="small" aria-live="polite"></span>
+    </div>
+  </section>
+
+  <section class="progress-card">
+    <strong>Your reading progress today</strong>
+    <p class="small">Complete the readings above to build a consistent habit.</p>
+    <div id="progressText" aria-live="polite">0 of 11 completed</div>
+    <div class="progress-track">
+      <div id="progressFill" class="progress-fill"></div>
+    </div>
+  </section>
+
+  <p class="meaning-note">
+    Translation wording can differ between reputable editions. Please verify the
+    Arabic against a trusted mushaf, particularly when using this page for recitation.
+  </p>
+</main>
+
+<script src="/app.js"></script>
+<script>
+(function () {
+  const container = document.getElementById("readingChecklist");
+  if (!container) return;
+
+  const boxes = [...container.querySelectorAll('input[type="checkbox"][data-key]')];
+  const status = document.getElementById("readingStatus");
+  const progressText = document.getElementById("progressText");
+  const progressFill = document.getElementById("progressFill");
+
+  function updateProgress() {
+    const completed = boxes.filter(box => box.checked).length;
+    if (progressText) progressText.textContent = `${completed} of ${boxes.length} completed`;
+    if (progressFill) progressFill.style.width = `${completed / boxes.length * 100}%`;
+  }
+
+  boxes.forEach(box => box.addEventListener("change", updateProgress));
+  updateProgress();
+
+  // Keep the progress display in sync with the existing daily checklist reset.
+  document.getElementById("resetReading")?.addEventListener("click", () => {
+    setTimeout(updateProgress, 0);
+  });
+})();
+</script>
+
+<!-- Full Surahs are inserted into the same reading checklist above, not a separate section. -->
+<script>
+(function () {
+  const extra = [
+    {id:18, key:'kahf', name:'Surah Al-Kahf', meaning:'The Cave', count:110},
+    {id:36, key:'yaseen', name:'Surah Ya-Sin', meaning:'Ya-Sin', count:83},
+    {id:55, key:'rahman', name:'Surah Ar-Rahman', meaning:'The Most Merciful', count:78},
+    {id:56, key:'waqiah', name:'Surah Al-Waqi’ah', meaning:'The Inevitable', count:96},
+    {id:67, key:'mulk', name:'Surah Al-Mulk', meaning:'The Sovereignty', count:30}
+  ];
+  const base = 'https://quran-json.risanb.com';
+  const cachePrefix = 'portal-extra-surah-v1:';
+  const list = document.getElementById('readingChecklist');
+  const status = document.getElementById('extraSurahsStatus');
+  const today = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
+  const progressKey = `reading-extra:${today}`;
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(progressKey) || '{}'); } catch (_) {}
+
+  function el(tag, cls, text) {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+  function safeText(value) { return String(value == null ? '' : value); }
+  function readCache(id) {
+    try { const value = JSON.parse(localStorage.getItem(cachePrefix + id) || 'null'); return value && value.arabic && value.en && value.ur ? value : null; }
+    catch (_) { return null; }
+  }
+  async function getJson(url) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Could not load ' + url);
+    return response.json();
+  }
+  async function getSurah(item) {
+    const cached = readCache(item.id);
+    if (cached) return cached;
+    const [ar, en, ur] = await Promise.all([
+      getJson(`${base}/text/uthmani/chapters/${item.id}.json`),
+      getJson(`${base}/translations/en-pickthall/chapters/${item.id}.json`),
+      getJson(`${base}/translations/ur-mahmudulhasan/chapters/${item.id}.json`)
+    ]);
+    const data = {arabic:ar.verses, en:en.verses, ur:ur.verses, cachedAt:new Date().toISOString()};
+    if (!Array.isArray(data.arabic) || !Array.isArray(data.en) || !Array.isArray(data.ur) || data.arabic.length !== item.count || data.en.length !== item.count || data.ur.length !== item.count) {
+      throw new Error(`${item.name}: verse count or translation data did not match expected ${item.count} verses.`);
+    }
+    try { localStorage.setItem(cachePrefix + item.id, JSON.stringify(data)); }
+    catch (_) { status.textContent = 'Loaded online, but this browser could not store the offline cache. Check browser storage settings.'; }
+    return data;
+  }
+  function getTranslation(verse) { return verse && (verse.translation || verse.text || verse.verse || ''); }
+  function render(item, data, number) {
+    const details = el('details', 'reading-item');
+    const summary = el('summary');
+    summary.append(el('span', 'number', String(number)));
+    const title = el('span', 'reading-title');
+    title.append(el('strong', '', item.name), el('small', '', `Qur’an ${item.id} · ${item.count} verses · ${item.meaning}`));
+    summary.append(title);
+    const label = el('label', 'read-check');
+    label.addEventListener('click', event => event.stopPropagation());
+    const checkbox = el('input'); checkbox.type='checkbox'; checkbox.dataset.extraKey=item.key; checkbox.setAttribute('aria-label', `Mark ${item.name} as read`); checkbox.checked=Boolean(saved[item.key]);
+    label.append(checkbox, document.createTextNode(' Read')); summary.append(label); details.append(summary);
+    const content = el('div','reading-content');
+    const grid = el('div','translation-grid');
+    const sections = [
+      {name:'Arabic', lang:'ar', cls:'arabic', dir:'rtl', verses:data.arabic, field:v=>v.text},
+      {name:'English meaning · Pickthall', lang:'en', cls:'', dir:'ltr', verses:data.en, field:getTranslation},
+      {name:'اردو ترجمہ · محمود الحسن', lang:'ur', cls:'urdu', dir:'rtl', verses:data.ur, field:getTranslation}
+    ];
+    for (const section of sections) {
+      const col=el('section','translation'); col.append(el('span','language',section.name));
+      const text=el('div',section.cls); text.lang=section.lang; text.dir=section.dir;
+      section.verses.forEach((v,i)=>{
+        const verse=el('p');
+        if(section.lang==='ar') { verse.textContent = `${section.field(v)} ۝ ${i+1}`; }
+        else { verse.textContent = `${i+1}. ${safeText(section.field(v))}`; }
+        text.append(verse);
+      });
+      col.append(text); grid.append(col);
+    }
+    content.append(grid); details.append(content); list.append(details);
+    checkbox.addEventListener('change', () => {
+      saved[checkbox.dataset.extraKey]=checkbox.checked;
+      try { localStorage.setItem(progressKey,JSON.stringify(saved)); } catch (_) {}
+      updateExtraProgress();
+    });
+  }
+  function updateExtraProgress() {
+    const boxes=[...list.querySelectorAll('input[type=checkbox][data-extra-key]')];
+    const done=boxes.filter(b=>b.checked).length;
+    const combinedStatus=document.getElementById('readingStatus');
+    const combinedText=document.getElementById('progressText');
+    const combinedFill=document.getElementById('progressFill');
+    // The original app.js owns the six existing readings; the five full Surahs share this same checklist.
+    let originalDone=0;
+    document.querySelectorAll('#readingChecklist input[type=checkbox][data-key]').forEach(b=>{if(b.checked) originalDone++;});
+    const total=11, completed=originalDone+done;
+    if(combinedStatus) combinedStatus.textContent=`${completed} of ${total} completed today.`;
+    if(combinedText) combinedText.textContent=`${completed} of ${total} completed`;
+    if(combinedFill) combinedFill.style.width=`${total ? completed/total*100 : 0}%`;
+  }
+  document.getElementById('resetReading')?.addEventListener('click', () => {
+    saved={}; try { localStorage.setItem(progressKey,'{}'); } catch (_) {}
+    list.querySelectorAll('input[data-extra-key]').forEach(b=>b.checked=false);
+    setTimeout(updateExtraProgress,0);
+  });
+  // Keep combined progress correct when an original reading changes too.
+  document.getElementById('readingChecklist')?.addEventListener('change', () => setTimeout(updateExtraProgress,0));
+  (async function loadAll() {
+    let loaded=0;
+    for (let i=0;i<extra.length;i++) {
+      const item=extra[i];
+      try { const data=await getSurah(item); render(item,data,7+i); loaded++; updateExtraProgress(); }
+      catch (error) {
+        const card=el('details','reading-item'); const summary=el('summary');
+        summary.append(el('span','number',String(7+i)),el('span','reading-title',''));
+        summary.lastChild.append(el('strong','',item.name),el('small','',`Qur’an ${item.id} · ${item.count} verses`));
+        card.append(summary);
+        const body=el('div','reading-content'); body.append(el('p','',`${item.name} could not be loaded yet. Connect to the internet and refresh this page. Error: ${error.message}`)); card.append(body); list.append(card);
+      }
+    }
+    const allCached=extra.every(item=>Boolean(readCache(item.id)));
+    status.textContent = loaded===extra.length
+      ? (allCached ? 'All five full Surahs are cached in this browser. For reliable offline use, open this page once while online.' : 'All five full Surahs loaded.')
+      : `${loaded} of 5 full Surahs loaded. Connect to the internet and refresh to retry.`;
+    updateExtraProgress();
+  })();
+})();
+</script>
+
+</body>
+</html>

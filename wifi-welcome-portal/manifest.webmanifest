@@ -1,0 +1,11 @@
+
+{
+  "name": "Islamic Welcome Portal",
+  "short_name": "Islamic Portal",
+  "description": "Local Salah timetable and Qur'an reading companion",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0d1e1a",
+  "theme_color": "#12382e"
+}

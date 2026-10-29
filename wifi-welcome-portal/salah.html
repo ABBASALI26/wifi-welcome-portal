@@ -1,0 +1,75 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Salah Timings — Chicago</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<main class="container">
+  <p><a href="/">← Home</a></p>
+
+  <header class="hero">
+    <p class="eyebrow">Chicago, Illinois · ISNA · Standard Asr</p>
+    <h1>Salah Timings 🕌</h1>
+    <p>Your local prayer timetable.</p>
+  </header>
+
+  <section class="card">
+    <div class="notice">
+      <strong>Prayer-time accuracy:</strong>
+      No verified timetable is installed yet. Import a trusted Chicago
+      schedule before relying on this page for prayer.
+    </div>
+
+    <div class="toolbar">
+      <label for="datePicker">Choose date:</label>
+      <input type="date" id="datePicker">
+      <button id="todayBtn" class="secondary">Today</button>
+    </div>
+
+    <h2 id="dateTitle">Prayer schedule</h2>
+    <p id="nextPrayer" class="muted"></p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Prayer</th><th>Time</th><th>Details</th></tr>
+        </thead>
+        <tbody id="prayerRows"></tbody>
+      </table>
+    </div>
+
+    <p id="dataStatus" class="notice"></p>
+  </section>
+
+  <section class="card">
+    <h2>Import a timetable</h2>
+    <p>Choose a JSON file containing verified prayer times. Imported data is saved in this browser, so it can be used offline on this device.</p>
+
+    <label for="scheduleFile">Prayer timetable JSON file</label>
+    <input type="file" id="scheduleFile" accept=".json,application/json">
+
+    <p class="small">
+      Required prayer names: Fajr, Dhuhr, Asr, Maghrib and Isha.
+      Sunrise is optional. Times use 24-hour HH:MM format.
+    </p>
+
+    <button id="clearSaved" class="secondary">Clear imported timetable</button>
+  </section>
+
+  <section class="card">
+    <h2>Your settings</h2>
+    <ul>
+      <li>Location: Chicago, Illinois</li>
+      <li>Calculation preference: ISNA</li>
+      <li>Asr: Standard shadow factor</li>
+    </ul>
+    <p class="muted">Timings can vary by calculation settings and local mosque practice. Check your local mosque's timetable.</p>
+  </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>
